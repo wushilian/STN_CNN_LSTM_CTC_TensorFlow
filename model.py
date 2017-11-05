@@ -51,9 +51,7 @@ def stacked_bidirectional_rnn(RNN, num_units, num_layers, inputs, seq_lengths):
     :param seq_lengths: list or 1-D Tensor, sequence length, a list of sequence lengths, the length of the list is batch_size
     :param batch_size: int
     :return: the output of last layer bidirectional rnn with concatenating
-    这里用到几个tf的特性
-    1. tf.variable_scope(None, default_name="bidirectional-rnn")使用default_name
-    的话,tf会自动处理命名冲突
+
     """
     # TODO: add time_major parameter, and using batch_size = tf.shape(inputs)[0], and more assert
     _inputs = inputs
@@ -61,8 +59,6 @@ def stacked_bidirectional_rnn(RNN, num_units, num_layers, inputs, seq_lengths):
         raise ValueError("the inputs must be 3-dimentional Tensor")
 
     for _ in range(num_layers):
-        # 为什么在这加个variable_scope,被逼的,tf在rnn_cell的__call__中非要搞一个命名空间检查
-        # 恶心的很.如果不在这加的话,会报错的.
         with tf.variable_scope(None, default_name="bidirectional-rnn"):
             rnn_cell_fw = RNN(num_units)
             rnn_cell_bw = RNN(num_units)
