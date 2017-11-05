@@ -75,7 +75,7 @@ def train(train_dir=None,val_dir=None):
                 #train_err+=the_err*FLAGS.batch_size
                 #do validation
                 if step%FLAGS.validation_steps == 0:
-                    dense_decoded,lastbatch_err,lr = sess.run([g.dense_decoded,g.lerr,],val_feed)
+                    dense_decoded,lastbatch_err,lr = sess.run([g.dense_decoded,g.lerr,g.learning_rate],val_feed)
                     # print the decode result
                     acc = utils.accuracy_calculation(val_feeder.labels,dense_decoded,ignore_value=-1,isPrint=True)
                     avg_train_cost=train_cost/((cur_batch+1)*FLAGS.batch_size)
