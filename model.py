@@ -7,7 +7,6 @@ from tensorflow.python.client import device_lib
 from tensorflow.python.client import timeline
 import utils
 import os,sys
-import resnet as res
 slim=tf.contrib.slim
 from STN import spatial_transformer_network as stn
 
@@ -72,18 +71,6 @@ class Graph(object):
         self.graph = tf.Graph()
         with self.graph.as_default():
             self.inputs = tf.placeholder(tf.float32, [FLAGS.batch_size, utils.image_width, utils.image_height, 1])
-            '''net=res.residual_block(self.inputs,1,64,subsample=True,phase_train=True,scope='res_block1')
-            net = slim.max_pool2d(net, [2, 2], scope='pool1')
-            net = res.residual_block(net, 64, 128, subsample=True, phase_train=True, scope='res_block2')
-            net = slim.max_pool2d(net, [2, 2], scope='pool2')
-            net = res.residual_block(net, 128, 256, subsample=True, phase_train=True, scope='res_block3')
-            net = res.residual_block(net, 256, 256, subsample=False, phase_train=True, scope='res_block4')
-            net = res.residual_block(net, 256, 512, subsample=True, phase_train=True, scope='res_block5')
-            net = slim.max_pool2d(net, [2, 2], [1, 2], scope='pool3')
-            net = res.residual_block(net, 512, 512, subsample=False, phase_train=True, scope='res_block6')
-            net = slim.max_pool2d(net, [2, 2], [1, 2], scope='pool4')
-            net = slim.conv2d(net, 512, [2, 2], padding='VALID', scope='conv7')
-            net = batch_norm(net, True)'''
             with tf.variable_scope('STN'):
                 #Localisation net
                 conv1_loc = slim.conv2d(self.inputs, 32, [3, 3], scope='conv1_loc')
