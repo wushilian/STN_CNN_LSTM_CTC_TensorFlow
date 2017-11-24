@@ -10,4 +10,6 @@ It's hard to converge use STN,so you can delete the STN in model ,and it's easy 
 
 3.run train.py
 
-## this work based on @ilovin lstm_ctc_ocr project https://github.com/ilovin
+## use STN in mnist
+### left is rotated image，right is transformed image（STN's output）
+
