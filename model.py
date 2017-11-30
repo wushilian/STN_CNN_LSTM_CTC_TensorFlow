@@ -9,6 +9,9 @@ import utils
 import os,sys
 slim=tf.contrib.slim
 from STN import spatial_transformer_network as stn
+from densenet import *
+istraining=True
+nb_filter = 64
 
 FLAGS=utils.FLAGS
 #26*2 + 10 digit + blank + space
@@ -83,7 +86,7 @@ class Graph(object):
                 fc3_loc = slim.fully_connected(fc2_loc, 6, activation_fn=tf.nn.tanh, scope='fc3_loc')
                 # spatial transformer
                 h_trans = stn(self.inputs, fc3_loc, (120, 32))
-            with tf.variable_scope('CNN'):
+            '''with tf.variable_scope('CNN'):
                 net = slim.conv2d(self.inputs, 64, [3, 3], scope='conv1')
                 net = slim.max_pool2d(net, [2, 2], scope='pool1')
                 net = slim.conv2d(net, 128, [3, 3], scope='conv2')
@@ -100,7 +103,17 @@ class Graph(object):
                 net = slim.max_pool2d(net, [2, 2], [1, 2], scope='pool4')
                 net = slim.conv2d(net, 512, [2, 2], padding='VALID', activation_fn=None,scope='conv7')
                 net = batch_norm(net, is_training)
-                net=tf.nn.relu(net)
+                net=tf.nn.relu(net)'''
+            with tf.variable_scope('Dense_CNN'):
+                net=tf.layers.conv2d(inputs,nb_filter, 5,(2,2), "SAME", use_bias=False)
+                net,nb_filter=dense_block(net,8,8,nb_filter,istraining)
+                net,nb_filter=transition_block(net,128,istraining,pooltype=2)
+                net,nb_filter=dense_block(net,8,8,nb_filter,istraining)
+                net,nb_filter=transition_block(net,128,istraining,pooltype=3)
+                net,nb_filter=dense_block(net,8,8,nb_filter,istraining)
+                net,nb_filter=transition_block(net,128,istraining,pooltype=3)
+                net=tf.layers.conv2d(net,nb_filter, 3,(1,2), "SAME", use_bias=False)
+
             print(net)
             temp_inputs = net
             with tf.variable_scope('BLSTM'):
