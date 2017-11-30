@@ -41,7 +41,7 @@ def train(train_dir=None,val_dir=None):
         #print(len(val_inputs))
         val_feed={g.inputs: val_inputs,
                   g.labels: val_labels,
-                 g.seq_len: np.array([27]*val_inputs.shape[0])}
+                 g.seq_len: np.array([g.cnn_time]*val_inputs.shape[0])}
         for cur_epoch in range(FLAGS.num_epochs):
             shuffle_idx=np.random.permutation(num_train_samples)
             train_cost = 0
@@ -57,7 +57,7 @@ def train(train_dir=None,val_dir=None):
                 #batch_inputs,batch_seq_len,batch_labels=utils.gen_batch(FLAGS.batch_size)
                 feed={g.inputs: batch_inputs,
                         g.labels:batch_labels,
-                        g.seq_len:np.array([27]*batch_inputs.shape[0])}
+                        g.seq_len:np.array([g.cnn_time]*batch_inputs.shape[0])}
 
                 # if summary is needed
                 #batch_cost,step,train_summary,_ = sess.run([cost,global_step,merged_summay,optimizer],feed)
