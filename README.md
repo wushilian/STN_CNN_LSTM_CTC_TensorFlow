@@ -1,5 +1,6 @@
 # STN_CNN_LSTM_CTC_TensorFlow
 use STN+CNN+BLSTM+CTC to do OCR
+you can choose the basecnn(CRNN) or densenet
 ## Attention
 It's hard to converge use STN,so you can delete the STN in model ,and it's easy for you.If you delete the STN,the number of val image don't need equal to 256
 
