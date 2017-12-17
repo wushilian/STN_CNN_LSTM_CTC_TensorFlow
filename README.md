@@ -13,4 +13,4 @@ It's hard to converge use STN,so you can delete the STN in model ,and it's easy 
 
 ## Use STN in mnist
 ### left is rotated image，right is transformed image（STN's output）
-![image](https://github.com/wushilian/STN_CNN_LSTM_CTC_TensorFlow/blob/master/result/stn.JPG?raw=true)
+![image](https://github.com/wushilian/STN_CNN_LSTM_CTC_TensorFlow/blob/master/result/stn.jpg?raw=true)
