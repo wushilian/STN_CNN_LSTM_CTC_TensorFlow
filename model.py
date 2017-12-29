@@ -139,23 +139,9 @@ class Graph(object):
             temp_inputs = net
             with tf.variable_scope('BLSTM'):
                 self.labels = tf.sparse_placeholder(tf.int32)
-                self.lstm_inputs = tf.reshape(temp_inputs, [-1, self.cnn_time, self.num_feauture])
-                # 1d array of size [batch_size]
-                self.seq_len = tf.placeholder(tf.int32, [None])
-                # Defining the cell
-                # Can be:
-                #   tf.nn.rnn_cell.RNNCell
-                #   tf.nn.rnn_cell.GRUCell
-                # cell = tf.contrib.rnn.LSTMCell(FLAGS.num_hidden, state_is_tuple=True)
-                # cell = tf.contrib.rnn.DropoutWrapper(cell = cell,output_keep_prob=0.8)
-                #
-                # cell1 = tf.contrib.rnn.LSTMCell(FLAGS.num_hidden, state_is_tuple=True)
-                # cell1 = tf.contrib.rnn.DropoutWrapper(cell = cell1,output_keep_prob=0.8)
-                # Stacking rnn cells
-                # stack = tf.contrib.rnn.MultiRNNCell([cell,cell1] , state_is_tuple=True)
-
-                # stack = tf.contrib.rnn.MultiRNNCell([tf.contrib.rnn.LSTMCell(FLAGS.num_hidden,state_is_tuple=True) for _ in range(FLAGS.num_layers)] , state_is_tuple=True)
-                outputs = stacked_bidirectional_rnn(tf.contrib.rnn.LSTMCell, FLAGS.num_hidden, 2, self.lstm_inputs,self.seq_len)
+                self.lstm_inputs = tf.reshape(temp_inputs, [-1, self.cnn_time, self.num_feauture])                
+                output1 = stacked_bidirectional_rnn(tf.contrib.rnn.LSTMCell, FLAGS.num_hidden, 2, self.lstm_inputs,self.seq_len)
+                outputs = stacked_bidirectional_rnn(tf.contrib.rnn.LSTMCell, FLAGS.num_hidden, 2, output1,self.seq_len)
             # The second output is the last state and we will no use that
             # outputs, _ = tf.nn.dynamic_rnn(stack, self.lstm_inputs, self.seq_len, dtype=tf.float32)
             shape = tf.shape(self.lstm_inputs)
@@ -174,14 +160,9 @@ class Graph(object):
             self.cost = tf.reduce_mean(self.loss)
             self.learning_rate = tf.train.exponential_decay(FLAGS.initial_learning_rate,self.global_step,FLAGS.decay_steps,
                                                             FLAGS.decay_rate, staircase=True)
-           # self.optimizer=tf.train.AdadeltaOptimizer(learning_rate=self.learning_rate)
-            # self.optimizer = tf.train.RMSPropOptimizer(learning_rate=self.learning_rate,
-            # momentum=FLAGS.momentum).minimize(self.cost,global_step=self.global_step)
-
             self.optimizer = tf.train.MomentumOptimizer(learning_rate=self.learning_rate, momentum=FLAGS.momentum, use_nesterov=True).minimize(self.cost,
                                                                                                             global_step=self.global_step)
-            #self.optimizer = tf.train.AdadeltaOptimizer(learning_rate=FLAGS.initial_learning_rate).minimize(self.loss,global_step=self.global_step)
-
+           
             # Option 2: tf.contrib.ctc.ctc_beam_search_decoder
             # (it's slower but you'll get better results)
             # decoded, log_prob = tf.nn.ctc_greedy_decoder(logits, seq_len,merge_repeated=False)
