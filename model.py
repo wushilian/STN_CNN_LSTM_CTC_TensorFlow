@@ -9,7 +9,7 @@ import utils
 import os,sys
 slim=tf.contrib.slim
 #import STN as stn
-from TPS import ThinPlateSpline2 as stn
+#from TPS import ThinPlateSpline2 as stn
 FLAGS=utils.FLAGS
 from densenet import *
 #26*2 + 10 digit + blank + space
@@ -40,6 +40,7 @@ def stacked_bidirectional_rnn(RNN, num_units, num_layers, inputs, seq_lengths):
             (output, state) = tf.nn.bidirectional_dynamic_rnn(rnn_cell_fw, rnn_cell_bw, _inputs, seq_lengths,
                                                               dtype=tf.float32)
             _inputs = tf.concat(output, 2)
+
     return _inputs
 
 class Graph(object):
@@ -110,16 +111,17 @@ class Graph(object):
             temp_inputs = net
             with tf.variable_scope('BLSTM'):
                 self.labels = tf.sparse_placeholder(tf.int32)
+                self.seq_len=tf.placeholder(tf.int32,[None])
                 self.lstm_inputs = tf.reshape(temp_inputs, [-1, self.cnn_time, self.num_feauture])                
-                output1 = stacked_bidirectional_rnn(tf.contrib.rnn.LSTMCell, FLAGS.num_hidden, 2, self.lstm_inputs,self.seq_len)
-                outputs = stacked_bidirectional_rnn(tf.contrib.rnn.LSTMCell, FLAGS.num_hidden, 2, output1,self.seq_len)
+#                output1 = stacked_bidirectional_rnn(tf.contrib.rnn.LSTMCell, FLAGS.num_hidden, 2, self.lstm_inputs,self.seq_len)
+                outputs = stacked_bidirectional_rnn(tf.contrib.rnn.LSTMCell, FLAGS.num_hidden, 2,self.lstm_inputs,self.seq_len)
             # The second output is the last state and we will no use that
             # outputs, _ = tf.nn.dynamic_rnn(stack, self.lstm_inputs, self.seq_len, dtype=tf.float32)
             shape = tf.shape(self.lstm_inputs)
             batch_s, max_timesteps = shape[0], shape[1]
             # Reshaping to apply the same weights over the timesteps
-            outputs = tf.reshape(outputs, [-1, FLAGS.num_hidden])
-            W = tf.Variable(tf.truncated_normal([FLAGS.num_hidden,num_classes],stddev=0.1, dtype=tf.float32), name='W')
+            outputs = tf.reshape(outputs, [-1, FLAGS.num_hidden*2])
+            W = tf.Variable(tf.truncated_normal([FLAGS.num_hidden*2,num_classes],stddev=0.1, dtype=tf.float32), name='W')
             b = tf.Variable(tf.constant(0., dtype=tf.float32, shape=[num_classes], name='b'))
             logits = tf.matmul(outputs, W) + b
             # Reshaping back to the original shape
