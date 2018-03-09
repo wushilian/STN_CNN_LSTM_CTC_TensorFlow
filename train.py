@@ -86,4 +86,4 @@ def train(train_dir=None,val_dir=None):
                         cur_epoch+1,FLAGS.num_epochs,acc,avg_train_cost,lastbatch_err,time.time()-start_time,lr))
 if __name__ == '__main__':
     #train(train_dir='train',val_dir='val')
-    train(train_dir='train', val_dir='test')
+    train(train_dir='train', val_dir='train')
