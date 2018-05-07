@@ -8,8 +8,7 @@ from tensorflow.python.client import timeline
 import utils
 import os,sys
 slim=tf.contrib.slim
-#import STN as stn
-#from TPS import ThinPlateSpline2 as stn
+from TPS import ThinPlateSpline2 as stn
 FLAGS=utils.FLAGS
 from densenet import *
 #26*2 + 10 digit + blank + space
